@@ -1,5 +1,5 @@
 import { getOSInfo } from "../modules/os";
-import { getBrowserInfo } from "../modules/browser";
+import { detectIncognitoMode, getBrowserInfo } from "../modules/browser";
 import { getDeviceInfoBasic } from "../modules/device";
 import { getNetworkInfo } from "../modules/network";
 import { getUserAgent } from "../modules/user-agent";
@@ -13,6 +13,7 @@ export const getDeviceInfo = async (): Promise<Device> => {
   const { userAgent } = getUserAgent();
   const device = await getDeviceInfoBasic();
   const location = await getLocationInfo();
+  const incognito = await detectIncognitoMode();
 
   return {
     os,
@@ -21,5 +22,6 @@ export const getDeviceInfo = async (): Promise<Device> => {
     network,
     location,
     userAgent,
+    incognito,
   };
 };
