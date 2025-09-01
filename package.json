@@ -1,14 +1,28 @@
 {
-  "author": "MD Maruf Hossain",
   "name": "@marufme/device-key",
   "private": false,
   "version": "1.0.2",
+  "description": "A lightweight, modular TypeScript library for comprehensive device detection, fingerprinting, and information gathering in browsers. Features tree-shakeable modules for OS detection, browser analysis, network info, device fingerprinting, and more.",
   "type": "module",
-  "repository": {
-    "url": "https://github.com/maruf-me/device-key"
+  "author": {
+    "name": "MD Maruf Hossain",
+    "email": "maruf@marufme.com",
+    "url": "https://marufme.com"
   },
+  "license": "MIT",
   "homepage": "https://doc-device-key.marufme.com",
-  "description": "Device-key is a lightweight utility library designed to provide practical helper methods that simplify real-world\nuse cases.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maruf-me/device-key.git",
+    "directory": "packages/device-key"
+  },
+  "bugs": {
+    "url": "https://github.com/maruf-me/device-key/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/maruf-me"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -24,33 +38,43 @@
     "device-insight",
     "device-identify",
     "device-fingerprint",
-    "device-profiler",
-    "device-detector",
-    "client-device-detector",
-    "ua-device-detector",
-    "client-device-checker",
-    "ua-device-checker",
-    "device-intelligence",
-    "detectify-device",
-    "device-sense",
-    "devicely",
-    "device-key",
-    "smart-device-detector"
+    "browser-detection",
+    "os-detection",
+    "device-info",
+    "user-agent",
+    "device-identification",
+    "client-detection",
+    "hardware-detection",
+    "network-detection",
+    "typescript",
+    "tree-shakeable",
+    "modular",
+    "lightweight",
+    "browser-api",
+    "device-profiling",
+    "client-side",
+    "web-detection"
   ],
-  "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "main": "./dist/device-key.cjs",
   "module": "./dist/device-key.js",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
       "import": "./dist/device-key.js",
       "require": "./dist/device-key.cjs"
-    }
+    },
+    "./package.json": "./package.json"
   },
-  "types": "./dist/src/index.d.ts",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "devDependencies": {
     "typescript": "~5.8.3",
     "vite": "^7.1.2",

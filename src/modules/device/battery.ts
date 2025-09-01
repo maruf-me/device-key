@@ -1,8 +1,4 @@
-export interface BatteryInfo {
-  level: number;
-  charging: boolean;
-  chargingTime: number | null;
-}
+import type { BatteryInfo } from './types';
 
 export const getBatteryInfo = async (): Promise<BatteryInfo> => {
   // Battery info
