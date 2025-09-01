@@ -2,7 +2,7 @@
  * Hash a message using SHA-256 and return hex string.
  * @param msg Input message
  */
-const sha256 = async (msg: string): Promise<string> => {
+export const sha256 = async (msg: string): Promise<string> => {
   const data = new TextEncoder().encode(msg);
   const buf = await crypto.subtle.digest("SHA-256", data);
   return [...new Uint8Array(buf)]
@@ -13,7 +13,7 @@ const sha256 = async (msg: string): Promise<string> => {
 /**
  * Collect basic device info for fingerprinting.
  */
-const collectBasicInfo = (): string => {
+export const collectBasicInfo = (): string => {
   const nav = navigator;
   return [
     nav.userAgent,
@@ -29,7 +29,7 @@ const collectBasicInfo = (): string => {
 /**
  * Create a canvas fingerprint string.
  */
-const getCanvasFingerprint = (): string => {
+export const getCanvasFingerprint = (): string => {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   if (!ctx) return "";
@@ -47,7 +47,7 @@ const getCanvasFingerprint = (): string => {
 /**
  * Create a WebGL fingerprint string.
  */
-const getWebGLFingerprint = (): string => {
+export const getWebGLFingerprint = (): string => {
   const canvas = document.createElement("canvas");
   const gl = canvas.getContext("webgl");
   if (!gl) return "";
@@ -69,5 +69,3 @@ export const generateFingerprint = async (): Promise<string> => {
     getWebGLFingerprint();
   return sha256(data);
 };
-
-export { sha256, collectBasicInfo, getCanvasFingerprint, getWebGLFingerprint };

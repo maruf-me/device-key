@@ -1,13 +1,6 @@
-import { getBatteryInfo } from "./battery";
-import { getDeviceId } from "./getDeviceId";
-
-export type DeviceBasicInfo = {
-  deviceId: string;
-  deviceType: string;
-  hardwareConcurrency: number;
-  screen: { width: number; height: number; pixelRatio: number };
-  battery: { level: number; charging: boolean; chargingTime: number | null };
-};
+import { getBatteryInfo } from './battery';
+import { getDeviceId } from './getDeviceId';
+import type { DeviceBasicInfo } from './types';
 
 export const getDeviceInfoBasic = async (): Promise<DeviceBasicInfo> => {
   const ua = navigator.userAgent;
@@ -28,15 +21,6 @@ export const getDeviceInfoBasic = async (): Promise<DeviceBasicInfo> => {
 
   // Device ID (stable)
   const { deviceId } = await getDeviceId();
-
-  // // ✅ Check if saved value exists
-  // const saved = localStorage.getItem(SCREEN_KEY);
-  // if (saved) {
-  //   screenInfo = JSON.parse(saved);
-  // } else {
-  //   // ✅ Save the original physical screen size
-  //   localStorage.setItem(SCREEN_KEY, JSON.stringify(screenInfo));
-  // }
 
   return {
     deviceId,

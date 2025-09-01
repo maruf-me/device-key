@@ -1,9 +1,4 @@
-export interface OSInfo {
-  name: string;
-  version: string;
-  platform: string;
-  architecture: string;
-}
+import type { OSInfo } from './types';
 
 export const getOSInfo = (): OSInfo => {
   const ua = navigator.userAgent;

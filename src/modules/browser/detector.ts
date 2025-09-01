@@ -1,9 +1,4 @@
-export interface BrowserInfo {
-  name: string;
-  version: string;
-  engine: string;
-  vendor: string;
-}
+import type { BrowserInfo } from './types';
 
 export const getBrowserInfo = (): BrowserInfo => {
   const ua = navigator.userAgent;
@@ -39,17 +34,17 @@ export const getBrowserInfo = (): BrowserInfo => {
   return { name, version, engine, vendor };
 };
 
-// export const detectIncognitoMode = async (): Promise<boolean> => {
-//   if ("storage" in navigator && "estimate" in navigator.storage) {
-//     try {
-//       const { quota } = await navigator.storage.estimate();
-//       // Incognito mode usually provides significantly less quota (~120MB or lower)
-//       if (quota && quota < 120 * 1024 * 1024) {
-//         return true; // Incognito detected
-//       }
-//     } catch {
-//       return false;
-//     }
-//   }
-//   return false;
-// };
+export const detectIncognitoMode = async (): Promise<boolean> => {
+  if ("storage" in navigator && "estimate" in navigator.storage) {
+    try {
+      const { quota } = await navigator.storage.estimate();
+      // Incognito mode usually provides significantly less quota (~120MB or lower)
+      if (quota && quota < 120 * 1024 * 1024) {
+        return true; // Incognito detected
+      }
+    } catch {
+      return false;
+    }
+  }
+  return false;
+};

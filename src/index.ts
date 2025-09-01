@@ -1,25 +1,26 @@
-// export * from "./utils";
-import { getOSInfo } from "./utils/os";
-import { getNetworkInfo } from "./utils/network";
-import { getBrowserInfo } from "./utils/browser";
-import { getBatteryInfo } from "./utils/battery";
-import { getDeviceId } from "./utils/getDeviceId";
-import { getUserAgent } from "./utils/user-agent";
+// Main exports - Default export is the rich device info object
 import { getDeviceInfo } from "./core/device-info";
-import { generateFingerprint } from "./utils/fingerprint";
-import { getCanvasFingerprint } from "./utils/fingerprint";
 
-export default getDeviceInfo; // Default export is the rich object
+// Module exports for granular usage
+export { getOSInfo } from "./modules/os";
+export { getNetworkInfo } from "./modules/network";
+export { getBrowserInfo, detectIncognitoMode } from "./modules/browser";
+export { getBatteryInfo, getDeviceId, getDeviceInfoBasic } from "./modules/device";
+export { getUserAgent, parseUserAgent } from "./modules/user-agent";
+export { getLocationInfo, getTimezoneInfo, getLanguageInfo } from "./modules/location";
+export { generateFingerprint, getCanvasFingerprint, getWebGLFingerprint } from "./modules/fingerprint";
 
-// Named exports for modular usage
-export {
-  getOSInfo,
-  getDeviceId,
-  getUserAgent,
-  getDeviceInfo,
-  getBatteryInfo,
-  getBrowserInfo,
-  getNetworkInfo,
-  generateFingerprint,
-  getCanvasFingerprint,
-};
+// Core exports
+export { getDeviceInfo };
+
+// Type exports
+export type * from "./types";
+
+// Default export
+export default getDeviceInfo;
+
+
+(async () => {
+  const deviceInfo = await getDeviceInfo();
+  console.log(deviceInfo);
+})();

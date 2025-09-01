@@ -1,5 +1,5 @@
-import { DEVICE_KEY } from "./../../app.config";
-import { generateFingerprint } from "./fingerprint";
+import { DEVICE_KEY } from "../../../app.config";
+import { generateFingerprint } from "../fingerprint";
 
 export const getDeviceId = async (): Promise<{ deviceId: string }> => {
   let deviceId = "server-mode";
