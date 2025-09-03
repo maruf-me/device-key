@@ -11,11 +11,12 @@ A lightweight, comprehensive device detection and fingerprinting library for mod
 - **🌐 Browser Information**: Get browser name, version, engine, and vendor
 - **💻 OS Detection**: Detect operating system name, version, platform, and architecture
 - **🔋 Battery Status**: Monitor battery level, charging status, and charging time
-- **🌍 Network Info**: Get network connection type and CPU cores
+- **🌍 Network Info**: Get network connection type, effectiveType, downlink, RTT, and CPU cores
 - **🆔 Device Fingerprinting**: Generate unique, stable device identifiers
-- **🎨 Canvas Fingerprinting**: Advanced fingerprinting using Canvas and WebGL
-- **🌍 Localization**: Language preferences and timezone information
+- **🎨 Canvas & WebGL Fingerprinting**: Canvas and WebGL helpers used for fingerprints
+- **🌍 Localization**: Language preferences, timezone, DST, and optional coordinates
 - **📱 Hardware Details**: Screen resolution, pixel ratio, and CPU cores
+- **🕵️ Incognito Detection**: Heuristic detection using StorageManager quota
 - **🔒 Privacy Aware**: Server-side safe with graceful fallbacks
 
 ## 🚀 Installation
@@ -50,15 +51,35 @@ console.log(deviceInfo);
 import {
   getOSInfo,
   getBrowserInfo,
+  getNetworkInfo,
+  getDeviceInfoBasic,
   getDeviceId,
+  getUserAgent,
+  parseUserAgent,
+  getLocationInfo,
+  getTimezoneInfo,
+  getLanguageInfo,
   generateFingerprint,
+  getCanvasFingerprint,
+  getWebGLFingerprint,
+  detectIncognitoMode,
 } from "@marufme/device-key";
 
 // Get specific information
 const osInfo = getOSInfo();
 const browserInfo = getBrowserInfo();
-const deviceId = await getDeviceId();
+const networkInfo = getNetworkInfo();
+const basicDevice = await getDeviceInfoBasic();
+const { deviceId } = await getDeviceId();
+const ua = getUserAgent();
+const uaParsed = parseUserAgent();
+const location = await getLocationInfo();
+const tz = getTimezoneInfo();
+const lang = getLanguageInfo();
 const fingerprint = await generateFingerprint();
+const canvasFp = getCanvasFingerprint();
+const webglFp = getWebGLFingerprint();
+const isIncognito = await detectIncognitoMode();
 ```
 
 ## 🔧 API Reference
@@ -67,7 +88,7 @@ const fingerprint = await generateFingerprint();
 
 #### `getDeviceInfo(): Promise<Device>`
 
-Returns comprehensive device information including OS, browser, device details, network info, and more.
+Returns comprehensive device information including OS, browser, device details, network info, user-agent, and location.
 
 ```typescript
 const deviceInfo = await getDeviceInfo();
@@ -75,15 +96,24 @@ const deviceInfo = await getDeviceInfo();
 // {
 //   os: { name, version, platform, architecture },
 //   browser: { name, version, engine, vendor },
-//   device: { deviceId, deviceType, hardwareConcurrency, screen, battery },
-//   network: { connectionType, cores },
-//   language: { current, types },
-//   timezone: string,
+//   device: {
+//     deviceId,
+//     deviceType,
+//     hardwareConcurrency,
+//     screen: { width, height, pixelRatio },
+//     battery: { level, charging, chargingTime }
+//   },
+//   network: { connectionType?, effectiveType?, downlink?, rtt?, cores? },
+//   location: {
+//     timezone: { timezone, offset, dst },
+//     language: { current, types, primary },
+//     coordinates?: GeolocationCoordinates
+//   },
 //   userAgent: string
 // }
 ```
 
-### Individual Utilities
+### OS
 
 #### `getOSInfo(): OSInfo`
 
@@ -91,11 +121,11 @@ Detects operating system information.
 
 ```typescript
 const osInfo = getOSInfo();
-// Returns: { name, version, platform, architecture }
+// { name, version, platform, architecture }
 // Example: { name: "Windows", version: "10", platform: "Win32", architecture: "64-bit" }
 ```
 
-**Supported OS**: Windows, macOS, Android, iOS, Linux
+### Browser
 
 #### `getBrowserInfo(): BrowserInfo`
 
@@ -103,76 +133,148 @@ Detects browser information.
 
 ```typescript
 const browserInfo = getBrowserInfo();
-// Returns: { name, version, engine, vendor }
+// { name, version, engine, vendor }
 // Example: { name: "Chrome", version: "120.0.0.0", engine: "Blink", vendor: "Google Inc." }
 ```
 
-**Supported Browsers**: Chrome, Firefox, Safari, Edge, Opera
+#### `detectIncognitoMode(): Promise<boolean>`
+
+Heuristic detection using StorageManager quota (returns true if incognito/private mode likely).
+
+```typescript
+const isIncognito = await detectIncognitoMode();
+```
+
+### Device
 
 #### `getDeviceInfoBasic(): Promise<DeviceBasicInfo>`
 
 Gets basic device information including screen details and battery status.
 
 ```typescript
-const deviceInfo = await getDeviceInfoBasic();
-// Returns: { deviceId, deviceType, hardwareConcurrency, screen, battery }
+const info = await getDeviceInfoBasic();
+// {
+//   deviceId,
+//   deviceType: "Desktop" | "Mobile" | "Tablet",
+//   hardwareConcurrency,
+//   screen: { width, height, pixelRatio },
+//   battery: { level, charging, chargingTime }
+// }
 ```
 
 #### `getDeviceId(): Promise<{ deviceId: string }>`
 
-Generates or retrieves a stable device identifier.
+Generates or retrieves a stable device identifier. On first run in the browser, it generates a fingerprint and stores it in `localStorage` under a small key. On non-browser environments, returns `"server-mode"`.
 
 ```typescript
 const { deviceId } = await getDeviceId();
-// Returns a unique, persistent device identifier
-```
-
-#### `generateFingerprint(): Promise<string>`
-
-Creates a unique device fingerprint using multiple data points.
-
-```typescript
-const fingerprint = await generateFingerprint();
-// Returns a SHA-256 hash based on device characteristics
-```
-
-#### `getCanvasFingerprint(): string`
-
-Generates a canvas-based fingerprint for additional device identification.
-
-```typescript
-const canvasFingerprint = getCanvasFingerprint();
-// Returns a canvas data URL for fingerprinting
 ```
 
 #### `getBatteryInfo(): Promise<BatteryInfo>`
 
-Gets battery information (mobile devices only).
+Gets battery information (where supported).
 
 ```typescript
-const batteryInfo = await getBatteryInfo();
-// Returns: { level, charging, chargingTime }
-// level: 0-100 (percentage), charging: boolean, chargingTime: seconds or null
+const battery = await getBatteryInfo();
+// { level: 0-100, charging: boolean, chargingTime: number | null }
 ```
+
+### Network
 
 #### `getNetworkInfo(): NetworkInfo`
 
-Gets network connection information.
+Gets network connection information and CPU cores where available.
 
 ```typescript
-const networkInfo = getNetworkInfo();
-// Returns: { connectionType, cores }
-// connectionType: "slow-2g", "2g", "3g", "4g", etc.
+const net = getNetworkInfo();
+// {
+//   connectionType?,
+//   effectiveType?,
+//   downlink?,
+//   rtt?,
+//   cores?
+// }
 ```
+
+### User Agent
 
 #### `getUserAgent(): { userAgent: string }`
 
-Gets the user agent string.
+Returns the current user agent string.
 
 ```typescript
 const { userAgent } = getUserAgent();
-// Returns the complete user agent string
 ```
+
+#### `parseUserAgent(): UserAgentInfo`
+
+Lightweight UA parsing helpers.
+
+```typescript
+const ua = parseUserAgent();
+// { userAgent, isMobile, isTablet, isDesktop, isBot }
+```
+
+### Location & Locale
+
+#### `getLocationInfo(): Promise<LocationInfo>`
+
+Aggregates timezone, language, and optional geolocation coordinates (if permitted).
+
+```typescript
+const loc = await getLocationInfo();
+// {
+//   timezone: { timezone, offset, dst },
+//   language: { current, types, primary },
+//   coordinates?: GeolocationCoordinates
+// }
+```
+
+#### `getTimezoneInfo(): TimezoneInfo`
+
+Gets timezone identifier, UTC offset (minutes east of UTC), and DST flag.
+
+```typescript
+const tz = getTimezoneInfo();
+// { timezone, offset, dst }
+```
+
+#### `getLanguageInfo(): LanguageInfo`
+
+Gets language preferences.
+
+```typescript
+const lang = getLanguageInfo();
+// { current, types, primary }
+```
+
+### Fingerprint
+
+#### `generateFingerprint(): Promise<string>`
+
+Creates a unique device fingerprint using basic info + Canvas + WebGL, hashed with SHA-256.
+
+```typescript
+const fp = await generateFingerprint();
+```
+
+#### `getCanvasFingerprint(): string`
+
+Generates a canvas-based fingerprint string (data URL).
+
+```typescript
+const canvasFp = getCanvasFingerprint();
+```
+
+#### `getWebGLFingerprint(): string`
+
+Generates a WebGL-based fingerprint string (vendor::renderer).
+
+```typescript
+const webglFp = getWebGLFingerprint();
+```
+
+> Note: Low-level helpers like hashing and info collection are internal; only the functions listed above are part of the public API.
 
 ## 📱 Device Types
 
@@ -195,8 +297,8 @@ The library automatically detects and categorizes devices:
 
 - **No External APIs**: All detection is done client-side
 - **Graceful Fallbacks**: Works even when certain APIs are unavailable
-- **Server-Side Safe**: Can run in Node.js environments
-- **User Consent**: Respects user privacy preferences
+- **Server-Side Safe**: Can run in Node.js environments; returns conservative defaults
+- **User Consent**: Geolocation requests are optional and permission-based
 
 ## 🌐 Browser Support
 
