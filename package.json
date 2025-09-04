@@ -1,12 +1,12 @@
 {
   "name": "@marufme/device-key",
   "private": false,
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A lightweight, modular TypeScript library for comprehensive device detection, fingerprinting, and information gathering in browsers. Features tree-shakeable modules for OS detection, browser analysis, network info, device fingerprinting, and more.",
   "type": "module",
   "author": {
     "name": "MD Maruf Hossain",
-    "email": "maruf@marufme.com",
+    "email": "marufme.dev@gmail.com",
     "url": "https://marufme.com"
   },
   "license": "MIT",

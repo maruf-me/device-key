@@ -14,6 +14,7 @@ A lightweight, comprehensive device detection and fingerprinting library for mod
 - **🌍 Network Info**: Get network connection type, effectiveType, downlink, RTT, and CPU cores
 - **🆔 Device Fingerprinting**: Generate unique, stable device identifiers
 - **🎨 Canvas & WebGL Fingerprinting**: Canvas and WebGL helpers used for fingerprints
+- **🔍 IP Detection & VPN Bypass**: Detect public/real IP, VPN/Proxy, and possible DNS leaks
 - **🌍 Localization**: Language preferences, timezone, DST, and optional coordinates
 - **📱 Hardware Details**: Screen resolution, pixel ratio, and CPU cores
 - **🕵️ Incognito Detection**: Heuristic detection using StorageManager quota
@@ -54,11 +55,13 @@ import {
   getNetworkInfo,
   getDeviceInfoBasic,
   getDeviceId,
+  getBatteryInfo,
   getUserAgent,
   parseUserAgent,
   getLocationInfo,
   getTimezoneInfo,
   getLanguageInfo,
+  getIPInfo,
   generateFingerprint,
   getCanvasFingerprint,
   getWebGLFingerprint,
@@ -71,11 +74,13 @@ const browserInfo = getBrowserInfo();
 const networkInfo = getNetworkInfo();
 const basicDevice = await getDeviceInfoBasic();
 const { deviceId } = await getDeviceId();
+const battery = await getBatteryInfo();
 const ua = getUserAgent();
 const uaParsed = parseUserAgent();
 const location = await getLocationInfo();
 const tz = getTimezoneInfo();
 const lang = getLanguageInfo();
+const ipInfo = await getIPInfo();
 const fingerprint = await generateFingerprint();
 const canvasFp = getCanvasFingerprint();
 const webglFp = getWebGLFingerprint();
@@ -88,7 +93,7 @@ const isIncognito = await detectIncognitoMode();
 
 #### `getDeviceInfo(): Promise<Device>`
 
-Returns comprehensive device information including OS, browser, device details, network info, user-agent, and location.
+Returns comprehensive device information including OS, browser, device details, network info, user-agent, location, and incognito status.
 
 ```typescript
 const deviceInfo = await getDeviceInfo();
@@ -107,9 +112,21 @@ const deviceInfo = await getDeviceInfo();
 //   location: {
 //     timezone: { timezone, offset, dst },
 //     language: { current, types, primary },
-//     coordinates?: GeolocationCoordinates
+//     coordinates?: GeolocationCoordinates,
+//     ipInfo?: {
+//       publicIP,
+//       realIP?,
+//       isVPN,
+//       isProxy,
+//       isTor,
+//       country?,
+//       city?,
+//       isp?,
+//       confidence
+//     }
 //   },
-//   userAgent: string
+//   userAgent: string,
+//   incognito: boolean
 // }
 ```
 
@@ -219,14 +236,15 @@ const ua = parseUserAgent();
 
 #### `getLocationInfo(): Promise<LocationInfo>`
 
-Aggregates timezone, language, and optional geolocation coordinates (if permitted).
+Aggregates timezone, language, and optional geolocation coordinates (if permitted) and IP information.
 
 ```typescript
 const loc = await getLocationInfo();
 // {
 //   timezone: { timezone, offset, dst },
 //   language: { current, types, primary },
-//   coordinates?: GeolocationCoordinates
+//   coordinates?: GeolocationCoordinates,
+//   ipInfo?: IPInfo
 // }
 ```
 
@@ -246,6 +264,25 @@ Gets language preferences.
 ```typescript
 const lang = getLanguageInfo();
 // { current, types, primary }
+```
+
+#### `getIPInfo(): Promise<IPInfo>`
+
+Advanced IP detection with VPN/Proxy insights. Uses WebRTC leak checks, public IP services, and heuristic VPN/Proxy signals.
+
+```typescript
+const ip = await getIPInfo();
+// {
+//   publicIP: string,
+//   realIP?: string,
+//   isVPN: boolean,
+//   isProxy: boolean,
+//   isTor: boolean,
+//   country?: string,
+//   city?: string,
+//   isp?: string,
+//   confidence: number
+// }
 ```
 
 ### Fingerprint
@@ -295,7 +332,7 @@ The library automatically detects and categorizes devices:
 
 ## 🔒 Privacy & Security
 
-- **No External APIs**: All detection is done client-side
+- **No External APIs**: All detection is done client-side (IP detection may call public IP services)
 - **Graceful Fallbacks**: Works even when certain APIs are unavailable
 - **Server-Side Safe**: Can run in Node.js environments; returns conservative defaults
 - **User Consent**: Geolocation requests are optional and permission-based
