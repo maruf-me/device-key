@@ -19,10 +19,7 @@
   "bugs": {
     "url": "https://github.com/maruf-me/device-key/issues"
   },
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/maruf-me"
-  },
+
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
