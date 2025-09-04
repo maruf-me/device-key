@@ -7,7 +7,7 @@ export { getNetworkInfo } from "./modules/network";
 export { getBrowserInfo, detectIncognitoMode } from "./modules/browser";
 export { getBatteryInfo, getDeviceId, getDeviceInfoBasic } from "./modules/device";
 export { getUserAgent, parseUserAgent } from "./modules/user-agent";
-export { getLocationInfo, getTimezoneInfo, getLanguageInfo } from "./modules/location";
+export { getLocationInfo, getTimezoneInfo, getLanguageInfo, getIPInfo } from "./modules/location";
 export { generateFingerprint, getCanvasFingerprint, getWebGLFingerprint } from "./modules/fingerprint";
 
 // Core exports
@@ -18,9 +18,3 @@ export type * from "./types";
 
 // Default export
 export default getDeviceInfo;
-
-
-(async () => {
-  const deviceInfo = await getDeviceInfo();
-  console.log(deviceInfo);
-})();
